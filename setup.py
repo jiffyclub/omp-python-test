@@ -1,3 +1,4 @@
+import os
 import sys
 
 from ez_setup import use_setuptools
@@ -25,6 +26,19 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args or '-s')
         sys.exit(errno)
 
+extra_compile_args = []
+extra_link_args = None
+
+# separate compiler options for Windows
+if sys.platform.startswith('win'):
+    extra_compile_args = ['/w', '/openmp']
+# Use OpenMP if directed or not on a Mac
+elif os.environ.get('USEOPENMP') or not sys.platform.startswith('darwin'):
+    extra_compile_args += ['-fopenmp']
+    extra_link_args = [
+        '-lgomp'
+    ]
+
 
 setup(
     name='omp',
@@ -34,8 +48,8 @@ setup(
         Extension(
             'omp._omp',
             sources=['src/openmptest.c'],
-            extra_compile_args=['-fopenmp'],
-            extra_link_args=['-lgomp'])],
+            extra_compile_args=extra_compile_args,
+            extra_link_args=extra_link_args)],
     tests_require=['pytest'],
     cmdclass={'test': PyTest},
 )
