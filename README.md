@@ -20,3 +20,9 @@ There are 4 threads
 
 ========================= 1 passed in 0.06 seconds ==========================
 ```
+
+Mac Note: The default `gcc` compiler on Macs is actually Apple's `clang`
+compiler, which does not support OpenMP. For this to work on a Mac you'll
+need to install GNU's `gcc` (e.g. with Homebrew) and set the `CC`
+environment variable to point to it.
+For my computer I do `CC=gcc-4.9`.
